@@ -11,16 +11,20 @@ public class Enfermero extends Medico {
         this.nivelCertificacion = nivelCertificacion;
     }
 
+    public String getTipoTurno() { return tipoTurno; }
+    public void setTipoTurno(String tipoTurno) { this.tipoTurno = tipoTurno; }
+    public void setNivelCertificacion(String nivelCertificacion) { this.nivelCertificacion = nivelCertificacion; }
+    public String getNivelCertificacion() { return nivelCertificacion; }
+
     @Override
     public double calcularSalario() {
-        double extra = tipoTurno.equalsIgnoreCase("nocturno") ? 100 : 0;
+        double extra = tipoTurno != null && tipoTurno.equalsIgnoreCase("nocturno") ? 100 : 0;
         return salarioBase + extra;
     }
-    public void setNivelCertificacion(String nivelCertificacion) {
-        this.nivelCertificacion = nivelCertificacion;
+
+    @Override
+    public String toString() {
+        return super.toString() + String.format(" | Tipo: Enfermero | Turno: %s | Certificación: %s",
+                tipoTurno, nivelCertificacion);
     }
-    public String getNivelCertificacion() {
-        return nivelCertificacion;
-    }
-    
 }
