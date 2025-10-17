@@ -1,77 +1,71 @@
 package models.citas;
 
 import models.medicos.Medico;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Cita {
     private int idCita;
     private String nombrePaciente;
     private Medico medicoAsignado;
-    private String fecha; // Formato: "YYYY-MM-DD"
-    private String hora; //HH:MM"
-    private String motivoConsulta; 
-    private String estado; // Programada, Completada, Cancelada
+    private LocalDateTime fechaHora;
+    private String tipoCita; // consulta general, cirugia, terapia, diagnostico
+    private EstadoCita estado;
+    private List<String> historialReagendamientos; // registro simple de cambios
 
-    public Cita(int idCita, String nombrePaciente, Medico medicoAsignado, String fecha,
-                String motivoConsulta, String estado, String hora) {
+    private static final DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    public Cita(int idCita, String nombrePaciente, Medico medicoAsignado, LocalDateTime fechaHora,
+                String tipoCita, EstadoCita estado) {
         this.idCita = idCita;
         this.nombrePaciente = nombrePaciente;
         this.medicoAsignado = medicoAsignado;
-        this.fecha = fecha;
-        this.hora = hora;
-        this.motivoConsulta = motivoConsulta;
+        this.fechaHora = fechaHora;
+        this.tipoCita = tipoCita;
+        this.estado = estado;
+        this.historialReagendamientos = new ArrayList<>();
+    }
+
+    public int getIdCita() { return idCita; }
+    public String getNombrePaciente() { return nombrePaciente; }
+    public Medico getMedicoAsignado() { return medicoAsignado; }
+    public LocalDateTime getFechaHora() { return fechaHora; }
+    public String getTipoCita() { return tipoCita; }
+    public EstadoCita getEstado() { return estado; }
+
+    public void setMedicoAsignado(Medico medicoAsignado) { this.medicoAsignado = medicoAsignado; }
+    public void setFechaHora(LocalDateTime fechaHora) {
+        String before = this.fechaHora.format(fmt);
+        this.fechaHora = fechaHora;
+        String after = this.fechaHora.format(fmt);
+        historialReagendamientos.add(String.format("Reagendada: %s -> %s", before, after));
+    }
+    public void setEstado(EstadoCita estado) {
         this.estado = estado;
     }
 
-    public int getIdCita() {
-        return idCita;
-    }
-    public void setIdCita(int idCita) {
-        this.idCita = idCita;
-    }
-    public String getNombrePaciente() {
-        return nombrePaciente;
-    }
-    public void setNombrePaciente(String nombrePaciente) {
-        this.nombrePaciente = nombrePaciente;
-    }
-    public Medico getMedicoAsignado() {
-        return medicoAsignado;
-    }
-    public void setMedicoAsignado(Medico medicoAsignado) {
-        this.medicoAsignado = medicoAsignado;
-    }
-    public String getFechaHora() {
-        return fecha;
-    }
-    
-    public void setHora(String hora) {
-        this.hora = hora;
-    }
-    public String getFecha() {
-        return fecha;
-    }
-    public String getHora() {
-        return hora;
+    public List<String> getHistorialReagendamientos() { return historialReagendamientos; }
+
+    @Override
+    public String toString() {
+        return String.format("Cita[%d] Paciente: %s | Medico: %s | FechaHora: %s | Tipo: %s | Estado: %s",
+                idCita, nombrePaciente, medicoAsignado.getNombre(),
+                fechaHora.format(fmt), tipoCita, estado.name());
     }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-    public String getMotivoConsulta() {
-        return motivoConsulta;
-    }
-    public void setMotivoConsulta(String motivoConsulta) {
-        this.motivoConsulta = motivoConsulta;
-    }
-    public String getEstado() {
-        return estado;
-    }
-    public void setEstado(String estado) {
-        this.estado = estado;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cita)) return false;
+        Cita cita = (Cita) o;
+        return idCita == cita.idCita;
     }
 
-
-    
-
-    
+    @Override
+    public int hashCode() {
+        return Objects.hash(idCita);
+    }
 }
